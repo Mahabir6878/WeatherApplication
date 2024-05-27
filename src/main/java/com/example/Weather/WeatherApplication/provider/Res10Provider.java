@@ -37,8 +37,6 @@ public class Res10Provider {
 
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> responseEntity;
-
-
         HttpEntity<String> requestEntity = new HttpEntity<>(null, null);
 
         UriComponents uriBuilder = UriComponentsBuilder.fromHttpUrl(dailyUrl)
@@ -54,15 +52,12 @@ public class Res10Provider {
                     String.class);
 
             String jsonResponse = responseEntity.getBody();
-            return mapJsonToTempEntity(jsonResponse,cityCoordinates);
+            return mapJsonToTempEntity(jsonResponse, cityCoordinates);
         } catch (HttpStatusCodeException e) {
             throw new Exception(e.getMessage());
         }
-
-
     }
-
-    private Response10 mapJsonToTempEntity(String jsonResponse,CityCoordinates cityCoordinates) throws JsonProcessingException {
+    private Response10 mapJsonToTempEntity(String jsonResponse, CityCoordinates cityCoordinates) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(jsonResponse);
 
@@ -101,8 +96,6 @@ public class Res10Provider {
         }
         // Save the Response10 instance, which will cascade and save the TempEntity instances
         response10Repository.save(response10);
-
         return response10;
     }
-
 }

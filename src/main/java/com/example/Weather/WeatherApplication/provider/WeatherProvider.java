@@ -23,28 +23,27 @@ public class WeatherProvider {
     private String weatherUrl;
 
     public OpenWeatherResponseEntity getWeather(final CityCoordinates cityCoordinates) throws Exception {
-        RestTemplate restTemplate=new RestTemplate();
+        RestTemplate restTemplate = new RestTemplate();
         final ResponseEntity<OpenWeatherResponseEntity> responseEntity;
 
-        HttpEntity<String> requestEntity=new HttpEntity<>(null,null);
+        HttpEntity<String> requestEntity = new HttpEntity<>(null, null);
 
         //build URL
 
-        UriComponents uriBuilder= UriComponentsBuilder.fromHttpUrl(weatherUrl)
-                .queryParam("lat",cityCoordinates.getLatitude())
-        .queryParam("lon",cityCoordinates.getLongitude())
-               // .queryParam("cnt",10)
-                .queryParam("appid",apiKey).build();
+        UriComponents uriBuilder = UriComponentsBuilder.fromHttpUrl(weatherUrl)
+                .queryParam("lat", cityCoordinates.getLatitude())
+                .queryParam("lon", cityCoordinates.getLongitude())
+                // .queryParam("cnt",10)
+                .queryParam("appid", apiKey).build();
 
         System.out.println(uriBuilder.toUriString());
-        try{
-            responseEntity=restTemplate.exchange(uriBuilder.toUriString(),
-                    HttpMethod.GET,requestEntity,
+        try {
+            responseEntity = restTemplate.exchange(uriBuilder.toUriString(),
+                    HttpMethod.GET, requestEntity,
                     OpenWeatherResponseEntity.class);
-        }catch(HttpStatusCodeException e){
+        } catch (HttpStatusCodeException e) {
             throw new Exception(e.getMessage());
         }
         return responseEntity.getBody();
     }
-
 }

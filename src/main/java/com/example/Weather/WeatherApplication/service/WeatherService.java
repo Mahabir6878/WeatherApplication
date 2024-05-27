@@ -18,10 +18,8 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class WeatherService {
-
     @Autowired
     private GeoJPAEntity geoJPAEntity;
-
     @Autowired
     private Response10Repository response10Repository;
     private GeocodingProvider geocodingProvider;
@@ -41,13 +39,11 @@ public class WeatherService {
         this.geocodingCoordinatedTranformer = geocodingCoordinatedTranformer;
         this.weatherProvider = weatherProvider;
         this.openWeatherTransformer = openWeatherTransformer;
-        this.res10Provider=res10Provider;
-
+        this.res10Provider = res10Provider;
     }
-
     public GeocodingCoordinatesEntity getPinDetails(WeatherRequestDetails weatherRequestDetails) throws Exception {
         GeocodingCoordinatesEntity geocodingCoordinatesEntity = geoJPAEntity.findByPincode(weatherRequestDetails.getZipcode());
-        if(geocodingCoordinatesEntity != null){
+        if (geocodingCoordinatesEntity != null) {
             log.info("Fetched from DB");
             return geocodingCoordinatesEntity;
         }
@@ -58,33 +54,25 @@ public class WeatherService {
     }
 
     public WeatherResponse getWeather(WeatherRequestDetails weatherRequestDetails) throws Exception {
-
-//    Get Latitude and Longitude
-// if exists dont call api
+        //    Get Latitude and Longitude
+        // if exists dont call api
         final CityCoordinates cityCoordinates = geocodingCoordinatedTranformer
                 .transformToDomain
                         (geocodingProvider.
                                 getCoordinates(weatherRequestDetails));
 
-//    Get weather for geo coordinates
-
-
+        //    Get weather for geo coordinates
         final CityWeather cityWeather = openWeatherTransformer.transformToDomain(weatherProvider.getWeather(cityCoordinates));
-
-
         return openWeatherTransformer.transformToEntity(cityWeather);
-
     }
 
-    public Response10 get10(WeatherRequestDetails weatherRequestDetails)throws Exception {
+    public Response10 get10(WeatherRequestDetails weatherRequestDetails) throws Exception {
 
         final CityCoordinates cityCoordinates = geocodingCoordinatedTranformer
                 .transformToDomain
                         (geocodingProvider.
                                 getCoordinates(weatherRequestDetails));
-
-//    Get weather for geo coordinates
-
+        //    Get weather for geo coordinates
         Optional<Response10> optionalResponse10 = response10Repository.findByLatitudeAndLongitude(
                 cityCoordinates.getLatitude().toString(),
                 cityCoordinates.getLongitude().toString());
@@ -98,25 +86,20 @@ public class WeatherService {
             //response10Repository.save(response10);
             return response10;
         }
-
-
-
-
     }
 
-
-    public Response10 get10BasedonDate(WeatherRequestDetails weatherRequestDetails,String date)throws Exception {
+    public Response10 get10BasedonDate(WeatherRequestDetails weatherRequestDetails, String date) throws Exception {
 
         final CityCoordinates cityCoordinates = geocodingCoordinatedTranformer
                 .transformToDomain
                         (geocodingProvider.
                                 getCoordinates(weatherRequestDetails));
 
-//    Get weather for geo coordinates
+        //    Get weather for geo coordinates
 
         Optional<Response10> optionalResponse10 = response10Repository.findByLatitudeLongitudeAndDate(
                 cityCoordinates.getLatitude().toString(),
-                cityCoordinates.getLongitude().toString(),date);
+                cityCoordinates.getLongitude().toString(), date);
 
         if (optionalResponse10.isPresent()) {
             log.info("Fetched from DB");
@@ -127,11 +110,5 @@ public class WeatherService {
             //response10Repository.save(response10);
             return response10;
         }
-
-
-
-
     }
-
-
 }

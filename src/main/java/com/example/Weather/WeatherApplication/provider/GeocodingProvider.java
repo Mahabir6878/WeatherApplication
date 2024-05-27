@@ -21,35 +21,34 @@ public class GeocodingProvider {
     private String apiKey;
     @Value("${geocoding.url}")
     private String geoCodingUrl;
+
     public GeocodingCoordinatesEntity getCoordinates(final WeatherRequestDetails weatherRequestDetails) throws Exception {
 
-//        Geocoding API Call
+        //Geocoding API Call
 
-        RestTemplate restTemplate=new RestTemplate();
+        RestTemplate restTemplate = new RestTemplate();
         final ResponseEntity<GeocodingCoordinatesEntity> responseEntity;
 
-        HttpEntity<String> requestEntity=new HttpEntity<>(null,null);
-
-        //build URL
-
-        UriComponents uriBuilder= UriComponentsBuilder.fromHttpUrl(geoCodingUrl)
-                .queryParam("zip",weatherRequestDetails.getZipcode())
-                .queryParam("appid",apiKey).build();
+        HttpEntity<String> requestEntity = new HttpEntity<>(null, null);
+        /*
+        * Build URL
+        * */
+        UriComponents uriBuilder = UriComponentsBuilder.fromHttpUrl(geoCodingUrl)
+                .queryParam("zip", weatherRequestDetails.getZipcode())
+                .queryParam("appid", apiKey).build();
 
         System.out.println(uriBuilder.toUriString());
-        try{
-            responseEntity=restTemplate.exchange(uriBuilder.toUriString(),
-                    HttpMethod.GET,requestEntity,
+        try {
+            responseEntity = restTemplate.exchange(uriBuilder.toUriString(),
+                    HttpMethod.GET, requestEntity,
                     GeocodingCoordinatesEntity.class);
-        }catch(HttpStatusCodeException e){
+        } catch (HttpStatusCodeException e) {
             throw new Exception(e.getMessage());
         }
         responseEntity.getBody().setPincode(weatherRequestDetails.getZipcode());
         //save
         log.info("Calling API");
         return responseEntity.getBody();
-
-
 
 
     }
